@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Accompagnement Digital Professionnel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script>
+    tailwind = { config: {
+      theme: { extend: {
+        colors: {
+          primary: '#0a0a0b', surface: '#111113', elevated: '#161618',
+          accent: '#e4c87a', border: '#27272a', subtle: '#1e1e21'
+        },
+        fontFamily: {
+          syne: ['Syne','sans-serif'],
+          sans: ['DM Sans','sans-serif'],
+          mono: ['DM Mono','monospace']
+        }
+      }}
+    }
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --accent: #e4c87a;
+      --bg: #0a0a0b;
+      --btn-text: #1c1400;
+      --surface: #111113;
+      --elevated: #161618;
+      --text: #fafafa;
+      --text-2: #a1a1aa;
+      --text-3: #71717a;
+      --border: #27272a;
+      --border-2: #1e1e21;
+      --ease: cubic-bezier(0.23,1,0.32,1);
+    }
+    * { box-sizing: border-box; }
+    body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; -webkit-font-smoothing: antialiased; }
+    section[id] { scroll-margin-top: 72px; }
+
+    /* Fade-up reveal */
+    .fu { opacity: 0; transform: translateY(18px); transition: opacity .5s var(--ease), transform .5s var(--ease); }
+    .fu.s1 { transition-delay: 60ms; }
+    .fu.s2 { transition-delay: 120ms; }
+    .fu.s3 { transition-delay: 180ms; }
+    .fu.s4 { transition-delay: 240ms; }
+    .fu.on { opacity: 1; transform: none; }
+
+    /* Card hover */
+    .ch { transition: transform .25s var(--ease), border-color .25s var(--ease); }
+    .ch:hover { transform: translateY(-2px); border-color: var(--accent) !important; }
+
+    /* Nav active */
+    .nl.active { color: var(--accent); }
+
+    /* Input */
+    .inp {
+      width: 100%; background: var(--elevated); border: 1px solid var(--border);
+      color: var(--text); border-radius: 8px; padding: 12px 16px;
+      font-family: 'DM Sans', sans-serif; font-size: 14px;
+      transition: border-color .2s;
+    }
+    .inp:focus { outline: none; border-color: var(--accent); }
+    .inp::placeholder { color: var(--text-3); }
+    select.inp option { background: var(--elevated); }
+
+    /* Accordion */
+    .acc-body { max-height: 0; overflow: hidden; transition: max-height .35s var(--ease); }
+    .acc-body.open { max-height: 400px; }
+
+    /* Modal */
+    .modal-wrap { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.75); backdrop-filter: blur(8px); z-index: 100; align-items: center; justify-content: center; padding: 16px; }
+    .modal-wrap.open { display: flex; }
+    .modal-inner { opacity: 0; transform: scale(.96); transition: opacity .25s var(--ease), transform .25s var(--ease); }
+    .modal-wrap.open .modal-inner { opacity: 1; transform: scale(1); }
+
+    /* Mobile menu */
+    .mob-nav { display: none; position: absolute; top: 100%; left: 0; right: 0; background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 20px; flex-direction: column; gap: 16px; }
+    .mob-nav.open { display: flex; }
+
+    /* Roadmap dots */
+    .rdot { transition: background .3s var(--ease), border-color .3s var(--ease), color .3s var(--ease); }
+    .rdot.lit { background: var(--accent) !important; border-color: var(--accent) !important; color: var(--bg) !important; }
+
+    /* Badge recommandé */
+    .badge-rec { position: absolute; top: 14px; right: -6px; background: var(--accent); color: var(--btn-text); font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500; letter-spacing: .08em; padding: 3px 12px 3px 10px; clip-path: polygon(8px 0,100% 0,100% 100%,8px 100%,0 50%); }
+
+    /* Tooltip */
+    .ttip { position: fixed; z-index: 200; max-width: 270px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; font-size: 13px; color: var(--text-2); font-family: 'DM Sans',sans-serif; pointer-events: none; box-shadow: 0 8px 32px rgba(0,0,0,.5); }
+
+    /* Focus */
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .fu { opacity: 1; transform: none; }
+      .ch:hover { transform: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===============================
+     NAV
+     =============================== -->
+<header class="fixed top-0 inset-x-0 z-50 border-b border-[#1e1e21]" style="background:rgba(10,10,11,.88);backdrop-filter:blur(20px)">
+  <div class="max-w-[1200px] mx-auto px-8 max-sm:px-5 h-[68px] flex items-center justify-between relative">
+    <span class="font-syne font-bold text-[14px] text-accent uppercase tracking-wide">Accompagnement Digital Pro</span>
+    <nav class="hidden md:flex gap-8">
+      <a href="#formules"  class="nl text-[#a1a1aa] hover:text-white text-sm transition-colors">Nos Formules</a>
+      <a href="#processus" class="nl text-[#a1a1aa] hover:text-white text-sm transition-colors">Comment ça marche</a>
+      <a href="#faq"       class="nl text-[#a1a1aa] hover:text-white text-sm transition-colors">FAQ</a>
+      <a href="#contact"   class="nl text-[#a1a1aa] hover:text-white text-sm transition-colors">Contact</a>
+    </nav>
+    <button id="hbg" class="md:hidden p-2 flex flex-col gap-[5px]" aria-label="Menu">
+      <span class="w-5 h-0.5 bg-white block"></span>
+      <span class="w-5 h-0.5 bg-white block"></span>
+      <span class="w-5 h-0.5 bg-white block"></span>
+    </button>
+    <div id="mob" class="mob-nav">
+      <a href="#formules"  class="nl text-[#a1a1aa] text-sm">Nos Formules</a>
+      <a href="#processus" class="nl text-[#a1a1aa] text-sm">Comment ça marche</a>
+      <a href="#faq"       class="nl text-[#a1a1aa] text-sm">FAQ</a>
+      <a href="#contact"   class="nl text-[#a1a1aa] text-sm">Contact</a>
+    </div>
+  </div>
+</header>
+
+
+<!-- ===============================
+     HERO
+     =============================== -->
+<section id="hero" class="pt-[140px] pb-[100px] px-8 max-sm:px-5 max-w-[1200px] mx-auto">
+  <p class="fu font-mono text-[11px] uppercase text-accent tracking-[.12em] mb-5">Accompagnement digital professionnel</p>
+  <h1 class="fu s1 font-syne font-extrabold leading-[1.08] tracking-[-0.03em] mb-6 max-w-[680px]" style="font-size:clamp(32px,4.5vw,52px)">
+    Votre commerce mérite<br>une présence digitale<br><span class="text-accent">à la hauteur de votre savoir-faire.</span>
+  </h1>
+  <p class="fu s2 text-[17px] text-[#a1a1aa] leading-[1.65] max-w-[560px] mb-10 font-light">
+    Nous créons des sites web professionnels, sur mesure, pour les commerçants indépendants. Du design à la mise en ligne — tout est pris en charge.
+  </p>
+  <a href="#formules" class="fu s3 inline-flex items-center gap-2 bg-accent text-[#2e2200] font-bold text-[16px] px-9 py-[16px] rounded-[10px] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#f0d690]" style="box-shadow:0 0 0 1px rgba(228,200,122,.3), 0 8px 32px rgba(228,200,122,.22);">
+    Découvrir nos formules
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+  </a>
+</section>
+
+
+<!-- ===============================
+     POURQUOI
+     =============================== -->
+<section id="pourquoi" class="py-24 px-8 max-sm:px-5">
+  <div class="max-w-[1200px] mx-auto">
+    <p class="fu font-mono text-[11px] uppercase text-accent tracking-[.12em] mb-2">01 — Pourquoi</p>
+    <h2 class="fu s1 font-syne font-bold tracking-[-0.02em] mb-14" style="font-size:clamp(24px,3vw,36px)">Pourquoi un site professionnel ?</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+
+      <div class="fu s1 ch bg-[#161618] border border-[#27272a] rounded-[14px] p-8">
+        <p class="font-mono text-[10px] uppercase tracking-[.1em] text-accent mb-4">Visibilité</p>
+        <svg class="text-accent mb-4" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <h3 class="font-syne font-bold text-[16px] mb-3">Être trouvé facilement</h3>
+        <p class="text-[14px] text-[#a1a1aa] leading-[1.65]">Quand un client cherche votre métier sur Google, votre commerce apparaît en premier. Pas un concurrent. Pas une plateforme.</p>
+      </div>
+
+      <div class="fu s2 ch bg-[#161618] border border-[#27272a] rounded-[14px] p-8">
+        <p class="font-mono text-[10px] uppercase tracking-[.1em] text-accent mb-4">Identité</p>
+        <svg class="text-accent mb-4" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <h3 class="font-syne font-bold text-[16px] mb-3">Votre image, vos règles</h3>
+        <p class="text-[14px] text-[#a1a1aa] leading-[1.65]">Un site à votre image, avec vos couleurs, vos photos, votre histoire. Pas un profil standardisé sur une plateforme générique.</p>
+      </div>
+
+      <div class="fu s3 ch bg-[#161618] border border-[#27272a] rounded-[14px] p-8">
+        <p class="font-mono text-[10px] uppercase tracking-[.1em] text-accent mb-4">Rentabilité</p>
+        <svg class="text-accent mb-4" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <h3 class="font-syne font-bold text-[16px] mb-3">Zéro commission</h3>
+        <p class="text-[14px] text-[#a1a1aa] leading-[1.65]">Chaque client qui vous trouve via votre site est un client direct. Pas de commission, pas d'intermédiaire.</p>
+      </div>
+
+      <div class="fu s4 ch bg-[#161618] border border-[#27272a] rounded-[14px] p-8">
+        <p class="font-mono text-[10px] uppercase tracking-[.1em] text-accent mb-4">Accessibilité</p>
+        <svg class="text-accent mb-4" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        <h3 class="font-syne font-bold text-[16px] mb-3">Accessible à tous</h3>
+        <p class="text-[14px] text-[#a1a1aa] leading-[1.65]">Votre site s'adapte à tous les écrans : téléphone, tablette, ordinateur. Vos clients vous trouvent où qu'ils soient.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ===============================
+     FORMULES
+     =============================== -->
+<section id="formules" class="py-24 px-8 max-sm:px-5">
+  <div class="max-w-[1200px] mx-auto">
+    <p class="fu font-mono text-[11px] uppercase text-accent tracking-[.12em] mb-2">02 — Formules</p>
+    <h2 class="fu s1 font-syne font-bold tracking-[-0.02em] mb-14" style="font-size:clamp(24px,3vw,36px)">Nos Formules</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+
+      <!-- Essentiel -->
+      <div class="fu s1 ch bg-[#161618] border border-[#27272a] rounded-[16px] p-9 flex flex-col">
+        <p class="font-mono text-[10px] uppercase tracking-[.1em] text-accent mb-1">Formule</p>
+        <h3 class="font-syne font-bold text-[22px] mb-1">Essentiel</h3>
+        <p class="text-[13px] text-[#71717a] mb-6">Être visible, tout simplement.</p>
+        <div class="pb-6 mb-6 border-b border-[#27272a]">
+          <span class="font-syne font-extrabold text-[42px] text-accent tracking-tight">600€</span>
+          <p class="font-mono text-[11px] text-[#71717a] mt-1">+ 25€/mois hébergement & maintenance</p>
+        </div>
+        <ul class="space-y-3 mb-8 flex-1 text-[14px] text-[#a1a1aa]">
+          <li class="flex gap-3 items-start"><svg class="shrink-0 mt-0.5 text-accent" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>Site vitrine responsive (1 à 3 pages)</li>
+          <li class="flex gap-3 items-start"><svg class="shrink-0 mt-0.5 text-accent" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>Design professionnel sur mesure</li>
+          <li class="flex gap-3 items-start"><svg class="shrink-0 mt-0.5 text-accent" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>Référencement local Google</li>
+          <li class="flex gap-3 items-start"><svg class="shrink-0 mt-0.5 text-accent" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>Nom de domaine inclus 1 an</li>
+          <li class="flex gap-3 items-start"><svg class="shrink-0 mt-0.5 text-accent" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>Bouton WhatsApp / appel direct</li>
+          <li class="flex gap-3 items-start"><svg class="shrink-0 mt-0.5 text-accent" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>Formulaire de contact</li>
+          <li class="flex gap-3 items-start"><svg class="shrink-0 mt-0.5 text-accent" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>Certificat SSL sécurisé</li>
+          <li class="flex gap-3 items-start text-white font-medium">
+            <svg class="shrink-0 mt-0.5 text-accent" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <span>Contenu par vos soins <em>ou</em> clé en main <button class="ttip-btn ml-1 inline-flex items-center justify-center w-4 h-4 rounded-full border border-[#71717a] text-[#71717a] text-[10px] hover:border-accent hover:text-accent transition-colors align-middle" aria-label="Info">?</button></span>
+          </li>
+        </ul>
+        <button onclick="openModal('Essentiel','600€','+25€/mois')" class="w-full py-3.5 rounded-[8px] border border-[#27272a] text-white font-medium text-[14px] hover:border-accent hover:text-accent transition-all duration-200">Choisir cette formule</button>
+
+      </div>
+
+      <!-- Premium — RECOMMANDÉ -->
+      <div class="fu s2 ch border border-accent rounded-[16px] p-9 flex flex-col relative overflow-hidden" style="background:linear-gradient(160deg,rgba(228,200,122,.07) 0%,#161618 35%)">
+        <div class="badge-rec">RECOMMANDÉ</div>
+        <p class="font-mono text-[10px] uppercase tracking-[.1em] text-accent mb-1">Formule</p>
+        <h3 class="font-syne font-bold text-[22px] mb-1">Premium</h3>
+        <p class="text-[13px] text-[#71717a] mb-6">Attirer, convertir, fidéliser.</p>
+        <div class="pb-6 mb-6 border-b border-[#27272a]">
+          <span class="font-syne font-extrabold text-[42px] text-accent tracking-tight">1 000€</span>
+          <p class="font-mono text-[11px] text-[#71717a] mt-1">+ 40€/mois hébergement & accompagnement</p>
+        </div>
+        <ul class="space-y-3 mb-8 flex-1 text-[14px]">
+          <li class="flex gap-3 items-start text-white font-semibold"><svg class="shrink-0 mt-0.5 text-accent" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>Tout Essentiel inclus</li>
+          <li class="flex gap-3 items-start text-[#a1a1aa]"><svg class="shrink-0 mt-0.5 text-accent" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>Site multi-pages haute qualité (5+ pages)</li>
+          <li class="flex gap-3 items-start text-[#a1a1aa]"><svg class="shrink-0 mt-0.5 text-accent" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>Identité visuelle complète (logo, palette, typo)</li>
+          <li class="flex gap-3 items-start text-[#a1a1aa]"><svg class="shrink-0 mt-0.5 text-accent" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>SEO avancé & campagne Google Ads configurée</li>
+          <li class="flex gap-3 items-start text-[#a1a1aa]"><svg class="shrink-0 mt-0.5 text-accent" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>Tableau de gestion clients & commandes</li>
+          <li class="flex gap-3 items-start text-[#a1a1aa]"><svg class="shrink-0 mt-0.5 text-accent" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>Photos produits optimisées</li>
+          <li class="flex gap-3 items-start text-[#a1a1aa]"><svg class="shrink-0 mt-0.5 text-accent" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>Analytics & rapport de performance</li>
+          <li class="flex gap-3 items-start text-white font-medium">
+            <svg class="shrink-0 mt-0.5 text-accent" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <span>Contenu par vos soins <em>ou</em> clé en main <button class="ttip-btn ml-1 inline-flex items-center justify-center w-4 h-4 rounded-full border border-[#71717a] text-[#71717a] text-[10px] hover:border-accent hover:text-accent transition-colors align-middle" aria-label="Info">?</button></span>
+          </li>
+        </ul>
+        <button onclick="openModal('Premium','1 000€','+40€/mois')" class="w-full py-3.5 rounded-[8px] bg-accent text-[#2e2200] font-semibold text-[14px] hover:bg-[#f0d690] transition-all duration-200">Choisir cette formule</button>
+      </div>
+
+      <!-- Intégral -->
+      <div class="fu s3 ch bg-[#161618] border border-[#27272a] rounded-[16px] p-9 flex flex-col">
+        <p class="font-mono text-[10px] uppercase tracking-[.1em] text-accent mb-1">Formule</p>
+        <h3 class="font-syne font-bold text-[22px] mb-1">Intégral</h3>
+        <p class="text-[13px] text-[#71717a] mb-6">L'excellence digitale, sans compromis.</p>
+        <div class="pb-6 mb-6 border-b border-[#27272a]">
+          <span class="font-syne font-extrabold text-[42px] text-accent tracking-tight">1 800€</span>
+          <p class="font-mono text-[11px] text-[#71717a] mt-1">+ 50€/mois tout inclus</p>
+        </div>
+        <ul class="space-y-3 mb-8 flex-1 text-[14px]">
+          <li class="flex gap-3 items-start text-white font-semibold"><svg class="shrink-0 mt-0.5 text-accent" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>Tout Premium inclus</li>
+          <li class="flex gap-3 items-start text-[#a1a1aa]"><svg class="shrink-0 mt-0.5 text-accent" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>Site ultra haut de gamme sur mesure</li>
+          <li class="flex gap-3 items-start text-[#a1a1aa]"><svg class="shrink-0 mt-0.5 text-accent" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>Carte de fidélité digitale (QR code)</li>
+          <li class="flex gap-3 items-start text-[#a1a1aa]"><svg class="shrink-0 mt-0.5 text-accent" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>Notifications push pour vos clients</li>
+          <li class="flex gap-3 items-start text-[#a1a1aa]"><svg class="shrink-0 mt-0.5 text-accent" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>Conseiller dédié disponible 7j/7</li>
+          <li class="flex gap-3 items-start text-[#a1a1aa]"><svg class="shrink-0 mt-0.5 text-accent" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>Modifications illimitées</li>
+          <li class="flex gap-3 items-start text-[#a1a1aa]"><svg class="shrink-0 mt-0.5 text-accent" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>SMS automatisés post-achat</li>
+          <li class="flex gap-3 items-start text-[#a1a1aa]"><svg class="shrink-0 mt-0.5 text-accent" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>Tableau de bord commerçant complet</li>
+          <li class="flex gap-3 items-start text-white font-medium">
+            <svg class="shrink-0 mt-0.5 text-accent" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <span>Contenu par vos soins <em>ou</em> clé en main <button class="ttip-btn ml-1 inline-flex items-center justify-center w-4 h-4 rounded-full border border-[#71717a] text-[#71717a] text-[10px] hover:border-accent hover:text-accent transition-colors align-middle" aria-label="Info">?</button></span>
+          </li>
+        </ul>
+        <button onclick="openModal('Intégral','1 800€','+50€/mois')" class="w-full py-3.5 rounded-[8px] border border-[#27272a] text-white font-medium text-[14px] hover:border-accent hover:text-accent transition-all duration-200">Choisir cette formule</button>
+      </div>
+
+    </div>
+
+    <!-- Tooltip box -->
+    <div id="ttip" class="ttip hidden">
+      <p class="font-semibold text-white mb-1 text-[13px]">Vous choisissez votre niveau d'autonomie</p>
+      <p>Intégrez vos photos et textes vous-même via notre interface simple — ou confiez-nous tout. C'est vous qui décidez.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===============================
+     MODAL
+     =============================== -->
+<div id="modal" class="modal-wrap" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal-inner bg-[#111113] border border-[#27272a] rounded-[16px] w-full max-w-[560px] max-h-[92vh] overflow-y-auto p-8 relative">
+    <button onclick="closeModal()" class="absolute top-5 right-5 text-[#71717a] hover:text-white transition-colors" aria-label="Fermer">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <p class="font-mono text-[11px] uppercase text-accent tracking-[.1em] mb-1">Formule choisie</p>
+    <h2 id="modal-title" class="font-syne font-bold text-[22px] mb-1">Formule <span id="m-name"></span></h2>
+    <p class="text-[13px] text-[#71717a] mb-7"><span id="m-prix" class="text-accent font-semibold"></span> — <span id="m-mens"></span></p>
+
+    <form id="mform" action="https://formspree.io/f/mdayelvk" method="POST" class="space-y-4">
+      <input type="hidden" name="formule" id="m-hidden">
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="font-mono text-[10px] uppercase tracking-[.08em] text-[#71717a] block mb-1.5">Nom du commerce *</label>
+          <input type="text" name="commerce" required class="inp" placeholder="La Bonne Fleur">
+        </div>
+        <div>
+          <label class="font-mono text-[10px] uppercase tracking-[.08em] text-[#71717a] block mb-1.5">Votre nom *</label>
+          <input type="text" name="name" required class="inp" placeholder="Marie Martin">
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="font-mono text-[10px] uppercase tracking-[.08em] text-[#71717a] block mb-1.5">Téléphone *</label>
+          <input type="tel" name="phone" required class="inp" placeholder="06 12 34 56 78">
+        </div>
+        <div>
+          <label class="font-mono text-[10px] uppercase tracking-[.08em] text-[#71717a] block mb-1.5">Email *</label>
+          <input type="email" name="email" required class="inp" placeholder="marie@commerce.fr">
+        </div>
+      </div>
+      <div>
+        <label class="font-mono text-[10px] uppercase tracking-[.08em] text-[#71717a] block mb-1.5">Adresse</label>
+        <input type="text" name="adresse" class="inp" placeholder="12 rue de la Paix, Neuilly-sur-Seine">
+      </div>
+      <div>
+        <label class="font-mono text-[10px] uppercase tracking-[.08em] text-[#71717a] block mb-1.5">Secteur d'activité</label>
+        <select name="secteur" class="inp">
+          <option value="" disabled selected>Choisissez votre secteur</option>
+          <option>Fleuriste</option><option>Boulanger / Pâtissier</option><option>Caviste</option>
+          <option>Épicerie fine</option><option>Chocolatier</option><option>Traiteur</option>
+          <option>Fromagerie</option><option>Salon de coiffure</option><option>Institut de beauté</option>
+          <option>Cordonnier</option><option>Pressing</option><option>Photographe</option>
+          <option>Restaurant / Bistro</option><option>Autre</option>
+        </select>
+      </div>
+      <div>
+        <label class="font-mono text-[10px] uppercase tracking-[.08em] text-[#71717a] block mb-1.5">Message</label>
+        <textarea name="message" rows="3" class="inp resize-none" placeholder="Informations supplémentaires, questions..."></textarea>
+      </div>
+      <div class="pt-1">
+        <button type="submit" class="w-full py-3.5 bg-accent text-[#2e2200] font-semibold text-[15px] rounded-[8px] hover:bg-[#f0d690] transition-all duration-200">Envoyer ma demande</button>
+        <p class="text-center text-[12px] text-[#71717a] mt-3">Nous vous recontactons sous 24h pour planifier la suite.</p>
+      </div>
+    </form>
+    <div id="m-ok" class="hidden text-center py-10">
+      <svg class="mx-auto text-accent mb-4" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="8,12 11,15 16,9"/></svg>
+      <h3 class="font-syne font-bold text-[20px] mb-2">Demande envoyée !</h3>
+      <p class="text-[14px] text-[#a1a1aa]">Nous vous recontactons sous 24h.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===============================
+     ROADMAP
+     =============================== -->
+<section id="processus" class="py-24 px-8 max-sm:px-5">
+  <div class="max-w-[1200px] mx-auto">
+    <p class="fu font-mono text-[11px] uppercase text-accent tracking-[.12em] mb-2">03 — Processus</p>
+    <h2 class="fu s1 font-syne font-bold tracking-[-0.02em] mb-20" style="font-size:clamp(24px,3vw,36px)">Prêts à vous lancer ?</h2>
+
+    <div class="relative" id="rdmap">
+      <!-- Desktop center track -->
+      <div class="hidden md:block absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px bg-[#27272a]"></div>
+      <div class="hidden md:block absolute left-1/2 -translate-x-1/2 top-0 w-px bg-gradient-to-b from-accent to-transparent transition-all duration-700" id="rprog" style="height:0"></div>
+      <!-- Mobile left track -->
+      <div class="md:hidden absolute left-[22px] top-0 bottom-0 w-px bg-[#27272a]"></div>
+
+      <!-- Step 1 — card LEFT -->
+      <div class="rd-step fu relative mb-16 md:mb-20 flex md:grid md:grid-cols-[1fr_auto_1fr] items-center pl-14 md:pl-0 gap-0">
+        <div class="hidden md:block">
+          <div class="ch bg-[#161618] border border-[#27272a] rounded-[14px] p-7 ml-auto mr-14 max-w-[380px]">
+            <p class="font-mono text-[10px] uppercase tracking-[.1em] text-accent mb-2">Étape 01</p>
+            <h3 class="font-syne font-bold text-[17px] mb-3">Échange téléphonique</h3>
+            <p class="text-[14px] text-[#a1a1aa] leading-[1.65]">Un appel de 15 minutes pour comprendre votre activité, vos besoins, et vos ambitions. On écoute, on conseille — zéro engagement.</p>
+          </div>
+        </div>
+        <div class="md:static absolute left-0 top-1/2 -translate-y-1/2 md:translate-y-0 z-10">
+          <div class="rdot w-11 h-11 rounded-full border-2 border-[#27272a] bg-[#0a0a0b] flex items-center justify-center font-syne font-bold text-[14px] text-[#71717a]">1</div>
+        </div>
+        <div class="md:hidden w-full">
+          <div class="bg-[#161618] border border-[#27272a] rounded-[12px] p-5">
+            <p class="font-mono text-[10px] uppercase tracking-[.1em] text-accent mb-1">Étape 01</p>
+            <h3 class="font-syne font-bold text-[15px] mb-2">Échange téléphonique</h3>
+            <p class="text-[13px] text-[#a1a1aa] leading-[1.6]">Un appel de 15 min, zéro engagement. On comprend votre activité et vos besoins.</p>
+          </div>
+        </div>
+        <div class="hidden md:block"></div>
+      </div>
+
+      <!-- Step 2 — card RIGHT -->
+      <div class="rd-step fu s1 relative mb-16 md:mb-20 flex md:grid md:grid-cols-[1fr_auto_1fr] items-center pl-14 md:pl-0 gap-0">
+        <div class="hidden md:block"></div>
+        <div class="md:static absolute left-0 top-1/2 -translate-y-1/2 md:translate-y-0 z-10">
+          <div class="rdot w-11 h-11 rounded-full border-2 border-[#27272a] bg-[#0a0a0b] flex items-center justify-center font-syne font-bold text-[14px] text-[#71717a]">2</div>
+        </div>
+        <div class="hidden md:flex items-center">
+          <div class="ch bg-[#161618] border border-[#27272a] rounded-[14px] p-7 ml-14 max-w-[380px]">
+            <p class="font-mono text-[10px] uppercase tracking-[.1em] text-accent mb-2">Étape 02</p>
+            <h3 class="font-syne font-bold text-[17px] mb-3">Choix de votre formule</h3>
+            <p class="text-[14px] text-[#a1a1aa] leading-[1.65]">Vous choisissez la formule adaptée à vos objectifs. Un acompte de 30% confirme le lancement du projet.</p>
+          </div>
+        </div>
+        <div class="md:hidden w-full">
+          <div class="bg-[#161618] border border-[#27272a] rounded-[12px] p-5">
+            <p class="font-mono text-[10px] uppercase tracking-[.1em] text-accent mb-1">Étape 02</p>
+            <h3 class="font-syne font-bold text-[15px] mb-2">Choix de votre formule</h3>
+            <p class="text-[13px] text-[#a1a1aa] leading-[1.6]">Vous choisissez la formule. Un acompte de 30% confirme le lancement.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3 — card LEFT -->
+      <div class="rd-step fu s2 relative mb-16 md:mb-20 flex md:grid md:grid-cols-[1fr_auto_1fr] items-center pl-14 md:pl-0 gap-0">
+        <div class="hidden md:block">
+          <div class="ch bg-[#161618] border border-[#27272a] rounded-[14px] p-7 ml-auto mr-14 max-w-[380px]">
+            <p class="font-mono text-[10px] uppercase tracking-[.1em] text-accent mb-2">Étape 03</p>
+            <h3 class="font-syne font-bold text-[17px] mb-3">Création & Design</h3>
+            <p class="text-[14px] text-[#a1a1aa] leading-[1.65]">Votre site prend vie. Chaque couleur est étudiée, chaque détail est pensé pour refléter l'identité de votre commerce. C'est du sur mesure, pas du template.</p>
+          </div>
+        </div>
+        <div class="md:static absolute left-0 top-1/2 -translate-y-1/2 md:translate-y-0 z-10">
+          <div class="rdot w-11 h-11 rounded-full border-2 border-[#27272a] bg-[#0a0a0b] flex items-center justify-center font-syne font-bold text-[14px] text-[#71717a]">3</div>
+        </div>
+        <div class="md:hidden w-full">
+          <div class="bg-[#161618] border border-[#27272a] rounded-[12px] p-5">
+            <p class="font-mono text-[10px] uppercase tracking-[.1em] text-accent mb-1">Étape 03</p>
+            <h3 class="font-syne font-bold text-[15px] mb-2">Création & Design</h3>
+            <p class="text-[13px] text-[#a1a1aa] leading-[1.6]">Sur mesure, pas un template. Chaque détail reflète l'identité de votre commerce.</p>
+          </div>
+        </div>
+        <div class="hidden md:block"></div>
+      </div>
+
+      <!-- Step 4 — card RIGHT -->
+      <div class="rd-step fu s3 relative mb-16 md:mb-20 flex md:grid md:grid-cols-[1fr_auto_1fr] items-center pl-14 md:pl-0 gap-0">
+        <div class="hidden md:block"></div>
+        <div class="md:static absolute left-0 top-1/2 -translate-y-1/2 md:translate-y-0 z-10">
+          <div class="rdot w-11 h-11 rounded-full border-2 border-[#27272a] bg-[#0a0a0b] flex items-center justify-center font-syne font-bold text-[14px] text-[#71717a]">4</div>
+        </div>
+        <div class="hidden md:flex items-center">
+          <div class="ch bg-[#161618] border border-[#27272a] rounded-[14px] p-7 ml-14 max-w-[380px]">
+            <p class="font-mono text-[10px] uppercase tracking-[.1em] text-accent mb-2">Étape 04</p>
+            <h3 class="font-syne font-bold text-[17px] mb-3">Révisions & Mise en ligne</h3>
+            <p class="text-[14px] text-[#a1a1aa] leading-[1.65]">Vous validez, on ajuste en direct. Une fois approuvé, votre site est en ligne en quelques heures. Toutes les fonctionnalités sont activées.</p>
+          </div>
+        </div>
+        <div class="md:hidden w-full">
+          <div class="bg-[#161618] border border-[#27272a] rounded-[12px] p-5">
+            <p class="font-mono text-[10px] uppercase tracking-[.1em] text-accent mb-1">Étape 04</p>
+            <h3 class="font-syne font-bold text-[15px] mb-2">Révisions & Mise en ligne</h3>
+            <p class="text-[13px] text-[#a1a1aa] leading-[1.6]">Vous validez, on ajuste. En ligne en quelques heures.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 5 — card LEFT -->
+      <div class="rd-step fu s4 relative flex md:grid md:grid-cols-[1fr_auto_1fr] items-center pl-14 md:pl-0 gap-0">
+        <div class="hidden md:block">
+          <div class="ch bg-[#161618] border border-[#27272a] rounded-[14px] p-7 ml-auto mr-14 max-w-[380px]">
+            <p class="font-mono text-[10px] uppercase tracking-[.1em] text-accent mb-2">Étape 05</p>
+            <h3 class="font-syne font-bold text-[17px] mb-3">Suivi & Accompagnement</h3>
+            <p class="text-[14px] text-[#a1a1aa] leading-[1.65]">On ne disparaît pas après la livraison. Maintenance, mises à jour, conseils — on reste à vos côtés pour faire grandir votre présence digitale.</p>
+          </div>
+        </div>
+        <div class="md:static absolute left-0 top-1/2 -translate-y-1/2 md:translate-y-0 z-10">
+          <div class="rdot w-11 h-11 rounded-full border-2 border-[#27272a] bg-[#0a0a0b] flex items-center justify-center font-syne font-bold text-[14px] text-[#71717a]">5</div>
+        </div>
+        <div class="md:hidden w-full">
+          <div class="bg-[#161618] border border-[#27272a] rounded-[12px] p-5">
+            <p class="font-mono text-[10px] uppercase tracking-[.1em] text-accent mb-1">Étape 05</p>
+            <h3 class="font-syne font-bold text-[15px] mb-2">Suivi & Accompagnement</h3>
+            <p class="text-[13px] text-[#a1a1aa] leading-[1.6]">On reste à vos côtés. Maintenance, mises à jour, votre présence grandit avec vous.</p>
+          </div>
+        </div>
+        <div class="hidden md:block"></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ===============================
+     OPTIONS
+     =============================== -->
+<section id="options" class="py-24 px-8 max-sm:px-5">
+  <div class="max-w-[1200px] mx-auto">
+    <p class="fu font-mono text-[11px] uppercase text-accent tracking-[.12em] mb-2">04 — Options</p>
+    <h2 class="fu s1 font-syne font-bold tracking-[-0.02em] mb-12" style="font-size:clamp(22px,2.5vw,32px)">Options & Personnalisation</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+      <div class="fu s1 ch bg-[#161618] border border-[#27272a] rounded-[14px] p-8">
+        <div class="flex items-start justify-between mb-5 gap-4">
+          <div>
+            <p class="font-mono text-[10px] uppercase tracking-[.1em] text-accent mb-1">Option</p>
+            <h3 class="font-syne font-bold text-[18px]">Newsletter & Emailing</h3>
+          </div>
+          <span class="shrink-0 font-mono text-[11px] text-accent bg-accent/10 px-3 py-1.5 rounded-full">À partir de 15€/mois</span>
+        </div>
+        <p class="text-[14px] text-[#a1a1aa] leading-[1.65]">Campagnes email automatisées pour fidéliser vos clients. Offres, nouveautés, actualités — tout est géré. Vous n'avez qu'à valider les contenus.</p>
+      </div>
+
+      <div class="fu s2 ch bg-[#161618] border border-[#27272a] rounded-[14px] p-8">
+        <div class="flex items-start justify-between mb-5 gap-4">
+          <div>
+            <p class="font-mono text-[10px] uppercase tracking-[.1em] text-accent mb-1">Option</p>
+            <h3 class="font-syne font-bold text-[18px]">Carte de fidélité digitale</h3>
+          </div>
+          <div class="text-right shrink-0">
+            <span class="font-mono text-[10px] text-[#2e2200] bg-accent px-2.5 py-1 rounded-full block">Incluse Intégral</span>
+            <span class="font-mono text-[10px] text-[#71717a] mt-1 block">Tarif sur devis (autres)</span>
+          </div>
+        </div>
+        <p class="text-[14px] text-[#a1a1aa] leading-[1.65]">Vos clients cumulent des points à chaque visite via QR code. Récompenses configurables, notifications push, tableau de bord dédié.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ===============================
+     PALETTES
+     =============================== -->
+<section id="palettes" class="py-24 px-8 max-sm:px-5">
+  <div class="max-w-[1200px] mx-auto">
+    <p class="fu font-mono text-[11px] uppercase text-accent tracking-[.12em] mb-2">05 — Design</p>
+    <h2 class="fu s1 font-syne font-bold tracking-[-0.02em] mb-3" style="font-size:clamp(22px,2.5vw,32px)">Chaque commerce a son identité</h2>
+    <p class="fu s2 text-[15px] text-[#a1a1aa] mb-12">Quelques exemples de palettes pensées pour les commerces de proximité.</p>
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+
+      <div class="fu s1 ch rounded-[14px] border border-[#27272a] p-5" style="background:linear-gradient(135deg,#1a1a2e,#16213e)">
+        <div class="flex gap-2 mb-4">
+          <div class="w-7 h-7 rounded-full border border-white/10" style="background:#c8a2c8"></div>
+          <div class="w-7 h-7 rounded-full border border-white/10" style="background:#e8d5e8"></div>
+          <div class="w-7 h-7 rounded-full border border-white/10" style="background:#2d5016"></div>
+          <div class="w-7 h-7 rounded-full border border-white/10" style="background:#f5f0f5"></div>
+        </div>
+        <p class="font-syne font-bold text-[13px] text-[#e8d5e8] mb-0.5">Élégance Florale</p>
+        <p class="font-mono text-[10px] text-[#71717a] uppercase tracking-[.08em]">Fleuriste</p>
+      </div>
+
+      <div class="fu s2 ch rounded-[14px] border border-[#27272a] p-5" style="background:linear-gradient(135deg,#2d1b00,#3d2400)">
+        <div class="flex gap-2 mb-4">
+          <div class="w-7 h-7 rounded-full border border-white/10" style="background:#d4813a"></div>
+          <div class="w-7 h-7 rounded-full border border-white/10" style="background:#f5deb3"></div>
+          <div class="w-7 h-7 rounded-full border border-white/10" style="background:#8b4513"></div>
+          <div class="w-7 h-7 rounded-full border border-white/10" style="background:#faf0e6"></div>
+        </div>
+        <p class="font-syne font-bold text-[13px] text-[#f5deb3] mb-0.5">Boulangerie Artisanale</p>
+        <p class="font-mono text-[10px] text-[#71717a] uppercase tracking-[.08em]">Boulanger</p>
+      </div>
+
+      <div class="fu s3 ch rounded-[14px] border border-[#27272a] p-5" style="background:linear-gradient(135deg,#1a0a1e,#2d0f33)">
+        <div class="flex gap-2 mb-4">
+          <div class="w-7 h-7 rounded-full border border-white/10" style="background:#722f37"></div>
+          <div class="w-7 h-7 rounded-full border border-white/10" style="background:#c9a96e"></div>
+          <div class="w-7 h-7 rounded-full border border-white/10" style="background:#4a1942"></div>
+          <div class="w-7 h-7 rounded-full border border-white/10" style="background:#f2e8d5"></div>
+        </div>
+        <p class="font-syne font-bold text-[13px] text-[#c9a96e] mb-0.5">Cave & Terroir</p>
+        <p class="font-mono text-[10px] text-[#71717a] uppercase tracking-[.08em]">Caviste</p>
+      </div>
+
+      <div class="fu s4 ch rounded-[14px] border border-[#27272a] p-5" style="background:linear-gradient(135deg,#0d1a0d,#162316)">
+        <div class="flex gap-2 mb-4">
+          <div class="w-7 h-7 rounded-full border border-white/10" style="background:#4a7c59"></div>
+          <div class="w-7 h-7 rounded-full border border-white/10" style="background:#c8d5b9"></div>
+          <div class="w-7 h-7 rounded-full border border-white/10" style="background:#8b7355"></div>
+          <div class="w-7 h-7 rounded-full border border-white/10" style="background:#f9f4ef"></div>
+        </div>
+        <p class="font-syne font-bold text-[13px] text-[#c8d5b9] mb-0.5">Épicerie Fine</p>
+        <p class="font-mono text-[10px] text-[#71717a] uppercase tracking-[.08em]">Épicerie</p>
+      </div>
+
+      <div class="fu s4 ch rounded-[14px] border border-[#27272a] p-5" style="background:linear-gradient(135deg,#0f0f13,#191921)">
+        <div class="flex gap-2 mb-4">
+          <div class="w-7 h-7 rounded-full border border-white/10" style="background:#e8e8e8"></div>
+          <div class="w-7 h-7 rounded-full border border-white/10" style="background:#c4a882"></div>
+          <div class="w-7 h-7 rounded-full border border-white/10" style="background:#2d2d3a"></div>
+          <div class="w-7 h-7 rounded-full border border-white/10" style="background:#fafafa"></div>
+        </div>
+        <p class="font-syne font-bold text-[13px] text-[#e8e8e8] mb-0.5">Salon Moderne</p>
+        <p class="font-mono text-[10px] text-[#71717a] uppercase tracking-[.08em]">Coiffure / Beauté</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ===============================
+     FAQ
+     =============================== -->
+<section id="faq" class="py-24 px-8 max-sm:px-5">
+  <div class="max-w-[800px] mx-auto">
+    <p class="fu font-mono text-[11px] uppercase text-accent tracking-[.12em] mb-2">06 — FAQ</p>
+    <h2 class="fu s1 font-syne font-bold tracking-[-0.02em] mb-12" style="font-size:clamp(24px,3vw,36px)">Questions fréquentes</h2>
+    <div class="space-y-3">
+
+      <div class="fu acc bg-[#111113] border border-[#27272a] rounded-[12px] overflow-hidden">
+        <button class="acc-btn w-full flex items-center justify-between px-6 py-5 text-left" aria-expanded="false">
+          <span class="font-syne font-semibold text-[15px] pr-4">Combien de temps faut-il pour créer mon site ?</span>
+          <svg class="shrink-0 text-[#71717a] transition-transform duration-300" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
+        </button>
+        <div class="acc-body"><p class="px-6 pb-5 text-[14px] text-[#a1a1aa] leading-[1.65]">Chaque site est conçu à la main — pas de template générique. En moyenne : 1 à 2 semaines pour la formule Essentiel, 2 à 3 semaines pour Premium et Intégral.</p></div>
+      </div>
+
+      <div class="fu s1 acc bg-[#111113] border border-[#27272a] rounded-[12px] overflow-hidden">
+        <button class="acc-btn w-full flex items-center justify-between px-6 py-5 text-left" aria-expanded="false">
+          <span class="font-syne font-semibold text-[15px] pr-4">Est-ce que je peux modifier mon site moi-même ?</span>
+          <svg class="shrink-0 text-[#71717a] transition-transform duration-300" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
+        </button>
+        <div class="acc-body"><p class="px-6 pb-5 text-[14px] text-[#a1a1aa] leading-[1.65]">Absolument. Chaque formule inclut un accès à une interface d'édition simple — vous pouvez changer vos photos, vos textes et vos horaires sans aucune compétence technique. Vous préférez qu'on s'en charge ? C'est possible aussi.</p></div>
+      </div>
+
+      <div class="fu s2 acc bg-[#111113] border border-[#27272a] rounded-[12px] overflow-hidden">
+        <button class="acc-btn w-full flex items-center justify-between px-6 py-5 text-left" aria-expanded="false">
+          <span class="font-syne font-semibold text-[15px] pr-4">Mes données sont-elles sécurisées ?</span>
+          <svg class="shrink-0 text-[#71717a] transition-transform duration-300" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
+        </button>
+        <div class="acc-body"><p class="px-6 pb-5 text-[14px] text-[#a1a1aa] leading-[1.65]">Votre site est hébergé sur des serveurs sécurisés avec certificat SSL (HTTPS). Données protégées conformément au RGPD. Nous ne revendons jamais aucune donnée.</p></div>
+      </div>
+
+      <div class="fu s3 acc bg-[#111113] border border-[#27272a] rounded-[12px] overflow-hidden">
+        <button class="acc-btn w-full flex items-center justify-between px-6 py-5 text-left" aria-expanded="false">
+          <span class="font-syne font-semibold text-[15px] pr-4">Que se passe-t-il si je veux résilier ?</span>
+          <svg class="shrink-0 text-[#71717a] transition-transform duration-300" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
+        </button>
+        <div class="acc-body"><p class="px-6 pb-5 text-[14px] text-[#a1a1aa] leading-[1.65]">Aucun engagement longue durée. L'abonnement est résiliable à tout moment. Votre site reste actif jusqu'à la fin du mois payé. Nous pouvons également vous transférer les fichiers.</p></div>
+      </div>
+
+      <div class="fu s4 acc bg-[#111113] border border-[#27272a] rounded-[12px] overflow-hidden">
+        <button class="acc-btn w-full flex items-center justify-between px-6 py-5 text-left" aria-expanded="false">
+          <span class="font-syne font-semibold text-[15px] pr-4">C'est quoi le référencement local ?</span>
+          <svg class="shrink-0 text-[#71717a] transition-transform duration-300" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
+        </button>
+        <div class="acc-body"><p class="px-6 pb-5 text-[14px] text-[#a1a1aa] leading-[1.65]">C'est ce qui permet à votre commerce d'apparaître quand quelqu'un cherche votre métier dans votre quartier sur Google — par exemple : "fleuriste Neuilly-sur-Seine". On optimise votre site et votre fiche Google Business Profile.</p></div>
+      </div>
+
+      <div class="fu acc bg-[#111113] border border-[#27272a] rounded-[12px] overflow-hidden">
+        <button class="acc-btn w-full flex items-center justify-between px-6 py-5 text-left" aria-expanded="false">
+          <span class="font-syne font-semibold text-[15px] pr-4">Comment fonctionne l'accompagnement ?</span>
+          <svg class="shrink-0 text-[#71717a] transition-transform duration-300" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
+        </button>
+        <div class="acc-body"><p class="px-6 pb-5 text-[14px] text-[#a1a1aa] leading-[1.65]">Support par email (Essentiel), email et téléphone (Premium), ou conseiller dédié 7j/7 (Intégral). Réponse sous 24h maximum.</p></div>
+      </div>
+
+      <div class="fu s1 acc bg-[#111113] border border-[#27272a] rounded-[12px] overflow-hidden">
+        <button class="acc-btn w-full flex items-center justify-between px-6 py-5 text-left" aria-expanded="false">
+          <span class="font-syne font-semibold text-[15px] pr-4">La carte de fidélité digitale, comment ça marche ?</span>
+          <svg class="shrink-0 text-[#71717a] transition-transform duration-300" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
+        </button>
+        <div class="acc-body"><p class="px-6 pb-5 text-[14px] text-[#a1a1aa] leading-[1.65]">Exclusive à la formule Intégral : vos clients scannent un QR code en caisse. Ils cumulent des points et débloquent des récompenses. Pas d'application à télécharger — tout fonctionne dans le navigateur. Tableau de bord dédié pour vous.</p></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ===============================
+     CONTACT
+     =============================== -->
+<section id="contact" class="py-24 px-8 max-sm:px-5 border-t border-[#1e1e21]">
+  <div class="max-w-[1200px] mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
+
+      <!-- Infos -->
+      <div>
+        <p class="fu font-mono text-[11px] uppercase text-accent tracking-[.12em] mb-2">07 — Contact</p>
+        <h2 class="fu s1 font-syne font-bold tracking-[-0.02em] mb-4" style="font-size:clamp(24px,3vw,34px)">Parlons de votre projet</h2>
+        <p class="fu s2 text-[15px] text-[#a1a1aa] leading-[1.65] mb-10 max-w-[400px]">Un appel de 15 minutes, sans engagement, pour voir comment donner à votre commerce la visibilité qu'il mérite.</p>
+        <div class="space-y-3">
+          <a href="tel:+33749496164" class="fu s1 ch flex items-center gap-4 bg-[#161618] border border-[#27272a] rounded-[12px] px-5 py-4 group">
+            <div class="w-9 h-9 rounded-[8px] bg-accent/10 flex items-center justify-center shrink-0">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#e4c87a" stroke-width="1.5" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.57 3.47 2 2 0 0 1 3.54 1.29h3a2 2 0 0 1 2 1.72c.127.96.361 1.9.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.8a16 16 0 0 0 6.29 6.29l1.88-1.88a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </div>
+            <div>
+              <p class="font-mono text-[10px] uppercase tracking-[.08em] text-[#71717a] mb-0.5">Téléphone</p>
+              <p class="font-syne font-semibold text-[15px] group-hover:text-accent transition-colors">Raphaël — 07 49 49 61 64</p>
+            </div>
+          </a>
+          <a href="mailto:raphaelbakouch@gmail.com" class="fu s2 ch flex items-center gap-4 bg-[#161618] border border-[#27272a] rounded-[12px] px-5 py-4 group">
+            <div class="w-9 h-9 rounded-[8px] bg-accent/10 flex items-center justify-center shrink-0">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#e4c87a" stroke-width="1.5" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <div>
+              <p class="font-mono text-[10px] uppercase tracking-[.08em] text-[#71717a] mb-0.5">Email</p>
+              <p class="font-syne font-semibold text-[15px] group-hover:text-accent transition-colors">raphaelbakouch@gmail.com</p>
+            </div>
+          </a>
+          <a href="https://wa.me/33749496164" target="_blank" rel="noopener" class="fu s3 ch flex items-center gap-4 bg-[#161618] border border-[#27272a] rounded-[12px] px-5 py-4 group">
+            <div class="w-9 h-9 rounded-[8px] bg-accent/10 flex items-center justify-center shrink-0">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="#e4c87a"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+            </div>
+            <div>
+              <p class="font-mono text-[10px] uppercase tracking-[.08em] text-[#71717a] mb-0.5">WhatsApp</p>
+              <p class="font-syne font-semibold text-[15px] group-hover:text-accent transition-colors">Message direct</p>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Formulaire -->
+      <div class="fu s2 bg-[#111113] border border-[#27272a] rounded-[16px] p-8">
+        <h3 class="font-syne font-bold text-[18px] mb-6">Envoyer un message</h3>
+        <form id="cform" action="https://formspree.io/f/mdayelvk" method="POST" class="space-y-4">
+          <div>
+            <label class="font-mono text-[10px] uppercase tracking-[.08em] text-[#71717a] block mb-1.5">Nom *</label>
+            <input type="text" name="name" required class="inp" placeholder="Votre nom">
+          </div>
+          <div>
+            <label class="font-mono text-[10px] uppercase tracking-[.08em] text-[#71717a] block mb-1.5">Téléphone *</label>
+            <input type="tel" name="phone" required class="inp" placeholder="06 12 34 56 78">
+          </div>
+          <div>
+            <label class="font-mono text-[10px] uppercase tracking-[.08em] text-[#71717a] block mb-1.5">Email</label>
+            <input type="email" name="email" class="inp" placeholder="votre@email.fr">
+          </div>
+          <div>
+            <label class="font-mono text-[10px] uppercase tracking-[.08em] text-[#71717a] block mb-1.5">Message</label>
+            <textarea name="message" rows="4" class="inp resize-none" placeholder="Décrivez votre commerce et votre projet..."></textarea>
+          </div>
+          <button type="submit" class="w-full py-3.5 bg-accent text-[#2e2200] font-semibold text-[15px] rounded-[8px] hover:bg-[#f0d690] transition-all duration-200">Envoyer</button>
+        </form>
+        <div id="c-ok" class="hidden text-center py-6">
+          <p class="text-accent font-syne font-semibold text-[16px] mb-1">Message envoyé !</p>
+          <p class="text-[13px] text-[#a1a1aa]">Nous vous recontactons sous 24h.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ===============================
+     FOOTER
+     =============================== -->
+<footer class="py-10 px-8 border-t border-[#1e1e21] text-center">
+  <p class="font-mono text-[11px] text-[#71717a] uppercase tracking-[.08em] mb-1.5">Accompagnement Digital Professionnel — © 2026</p>
+  <p class="text-[12px] text-[#3f3f46]">Document confidentiel — usage réservé aux destinataires</p>
+</footer>
+
+
+<!-- ===============================
+     JS
+     =============================== -->
+<script>
+  // Scroll reveal
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); obs.unobserve(e.target); } });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.fu').forEach(el => obs.observe(el));
+
+  // Active nav
+  const navLinks = document.querySelectorAll('.nl');
+  const navObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(l => { l.classList.remove('active'); if (l.getAttribute('href') === '#' + e.target.id) l.classList.add('active'); });
+      }
+    });
+  }, { threshold: 0.4 });
+  document.querySelectorAll('section[id]').forEach(s => navObs.observe(s));
+
+  // Hamburger
+  document.getElementById('hbg').addEventListener('click', () => document.getElementById('mob').classList.toggle('open'));
+  document.querySelectorAll('#mob a').forEach(a => a.addEventListener('click', () => document.getElementById('mob').classList.remove('open')));
+
+  // Accordion
+  document.querySelectorAll('.acc-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const body = btn.nextElementSibling;
+      const icon = btn.querySelector('svg');
+      const isOpen = body.classList.contains('open');
+      document.querySelectorAll('.acc-body').forEach(b => b.classList.remove('open'));
+      document.querySelectorAll('.acc-btn svg').forEach(s => s.style.transform = '');
+      document.querySelectorAll('.acc-btn').forEach(b => b.setAttribute('aria-expanded','false'));
+      if (!isOpen) { body.classList.add('open'); icon.style.transform = 'rotate(180deg)'; btn.setAttribute('aria-expanded','true'); }
+    });
+  });
+
+  // Roadmap dots animation
+  const rdotObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('lit');
+        const prog = document.getElementById('rprog');
+        if (prog) {
+          const map = document.getElementById('rdmap');
+          const mapTop = map.getBoundingClientRect().top + window.scrollY;
+          const dotCenter = e.target.getBoundingClientRect().top + window.scrollY + 22;
+          prog.style.height = Math.max(0, dotCenter - mapTop) + 'px';
+        }
+      }
+    });
+  }, { threshold: 0.9 });
+  document.querySelectorAll('.rdot').forEach(d => rdotObs.observe(d));
+
+  // Modal
+  function openModal(name, prix, mens) {
+    document.getElementById('m-name').textContent = name;
+    document.getElementById('m-prix').textContent = prix;
+    document.getElementById('m-mens').textContent = mens;
+    document.getElementById('m-hidden').value = name;
+    document.getElementById('mform').style.display = '';
+    document.getElementById('m-ok').classList.add('hidden');
+    const wrap = document.getElementById('modal');
+    wrap.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    document.getElementById('modal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('modal').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  // Modal form submit
+  document.getElementById('mform').addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = e.target.querySelector('[type=submit]');
+    btn.textContent = 'Envoi…'; btn.disabled = true;
+    try {
+      const r = await fetch(e.target.action, { method:'POST', body: new FormData(e.target), headers:{'Accept':'application/json'} });
+      if (r.ok) { e.target.style.display = 'none'; document.getElementById('m-ok').classList.remove('hidden'); }
+      else { btn.textContent = 'Erreur — réessayer'; btn.disabled = false; }
+    } catch { btn.textContent = 'Erreur — réessayer'; btn.disabled = false; }
+  });
+
+  // Contact form submit
+  document.getElementById('cform').addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = e.target.querySelector('[type=submit]');
+    btn.textContent = 'Envoi…'; btn.disabled = true;
+    try {
+      const r = await fetch(e.target.action, { method:'POST', body: new FormData(e.target), headers:{'Accept':'application/json'} });
+      if (r.ok) { e.target.style.display = 'none'; document.getElementById('c-ok').classList.remove('hidden'); }
+      else { btn.textContent = 'Erreur — réessayer'; btn.disabled = false; }
+    } catch { btn.textContent = 'Erreur — réessayer'; btn.disabled = false; }
+  });
+
+  // Tooltip
+  const ttip = document.getElementById('ttip');
+  let ttTO;
+  document.querySelectorAll('.ttip-btn').forEach(btn => {
+    btn.addEventListener('mouseenter', e => {
+      clearTimeout(ttTO);
+      const r = btn.getBoundingClientRect();
+      ttip.style.top = (r.bottom + 8) + 'px';
+      ttip.style.left = Math.min(r.left, window.innerWidth - 290) + 'px';
+      ttip.classList.remove('hidden');
+    });
+    btn.addEventListener('mouseleave', () => { ttTO = setTimeout(() => ttip.classList.add('hidden'), 200); });
+    btn.addEventListener('click', e => {
+      e.preventDefault();
+      const r = btn.getBoundingClientRect();
+      ttip.style.top = (r.bottom + 8) + 'px';
+      ttip.style.left = Math.min(r.left, window.innerWidth - 290) + 'px';
+      ttip.classList.toggle('hidden');
+    });
+  });
+</script>
+</body>
+</html>
